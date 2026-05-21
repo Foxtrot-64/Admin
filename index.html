@@ -333,22 +333,7 @@ window.changePassword = async function(role) {
   try { await set(ref(db,'passwords'), {admin:ADMIN_PASSWORD, formateur:FORMATEUR_PASSWORD}); toast(`Mot de passe ${role} mis à jour ✓`); input.value=''; } catch(e){ toast('Erreur'); }
 };
 
-function getDefaultQuestions() {
-  return [
-    {id:'q1',section:'Question Théorique',text:"Quelles sont les étapes d'une Procédure, de l'arrestation à l'annonce du 10-15 ?",type:'open',points:1,image:''},
-    {id:'q2',section:'Question Théorique',text:"Que faire si aucun agent du même sexe n'est disponible pour une Palpation ?",type:'open',points:1,image:''},
-    {id:'q3',section:'Question Théorique',text:"Dans quelles circonstances le recours à un État-Major est-il nécessaire ?",type:'open',points:1,image:''},
-    {id:'q4',section:'Question Théorique',text:"Qui peut autoriser le Chef d'inculpation \"Association de Malfaiteurs\" ?",type:'mcq',points:1,options:["Un membre de l'État-Major","La supervision (Sergent I & II)","N'importe quel agent","Les Procureurs et Juges"],correct:[0],image:''},
-    {id:'q5',section:'Question Théorique',text:"Que faire si l'individu n'a pas sa carte d'identité et est masqué pour les droits Miranda ?",type:'open',points:1,image:''},
-    {id:'q6',section:'Question Théorique',text:"Parmi ces informations, lesquelles sont correctes ?",type:'mcq_multi',points:3,options:["Face à un avocat, je suis le seul décisionnaire","Un avocat peut exiger un procureur/juge","Un avocat a le dernier mot sur la prison fédérale","Lors d'une CI, la présomption d'innocence a l'avantage","CI = Comparution Immédiate"],correct:[0,4],image:''},
-    {id:'q7',section:'Question Théorique',text:"Qui peut appliquer une Min 1 / Max 1 ?",type:'open',points:1,image:''},
-    {id:'q8',section:'Question Pratique',text:"Cas Thomas Hisoto — Cette feuille de calcul contient-elle des erreurs ?",type:'open',points:3,image:''},
-    {id:'q9',section:'Question Pratique',text:"Le document suite à la non-disponibilité des Proc/Juge/EM est-il correct ?",type:'open',points:1,image:''},
-    {id:'q10',section:'Question Pratique',text:"Lorsqu'un prévenu vous insulte en procédure, que faites-vous ?",type:'mcq',points:1,options:["L'insulter en retour","Abandonner la procédure","Garder son sang froid puis le matraquer","Garder son sang froid et ajouter un chef d'inculpation"],correct:[3],image:''},
-    {id:'q11',section:'Question Pratique',text:"Le casier ci-dessous est-il correct ?",type:'mcq',points:1,options:["Oui","Non"],correct:[0],image:''},
-    {id:'q12',section:'Question Pratique',text:"Mise en situation — Aaron Elba / Braquage Fleeca : Complétez la feuille de calcul.",type:'open',points:5,image:''},
-  ];
-}
+
 
 function totalMax(){ return questions.reduce((s,q)=>s+q.points,0); }
 function calcTotal(sub){ return questions.reduce((s,q)=>{ const sc=sub.scores?.[q.id]; return s+(typeof sc==='number'?sc:0); },0); }
