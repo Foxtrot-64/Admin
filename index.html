@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0d0d12;--surface:#13131a;--surface2:#1a1a24;--surface3:#1e1e2e;
+  --bg:#0d0d12;--surface:#13131a;--surface2:#1a1a24;
   --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
   --accent:#7b6ef6;--accent2:#5b4fcf;
   --gold:#f5c842;--gold2:#c49b10;
@@ -71,17 +71,19 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .q-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:1rem}
 .q-tag{font-size:11px;font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;margin-top:2px}
 .q-question{font-size:14px;color:var(--muted);line-height:1.6;flex:1}
+.q-img{max-width:100%;border-radius:10px;margin-bottom:1rem;border:1px solid var(--border)}
 .q-answer{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.7;color:var(--text);margin-bottom:1rem;white-space:pre-wrap;min-height:40px}
 .q-answer.empty{color:var(--muted);font-style:italic}
 .q-answer.correct{border-color:rgba(80,200,120,.3);background:rgba(80,200,120,.06)}
 .q-answer.wrong{border-color:rgba(240,96,96,.3);background:rgba(240,96,96,.06)}
-.scoring-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.scoring-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:.5rem}
 .score-label2{font-size:12px;color:var(--muted)}
-.pts-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:'Syne',sans-serif;font-weight:600}
-.pts-btn:hover{border-color:var(--border2);color:var(--text)}
-.pts-btn.active{background:rgba(123,110,246,.2);border-color:rgba(123,110,246,.4);color:var(--accent)}
+.pts-input{width:70px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-family:'Syne',sans-serif;font-weight:700;font-size:14px;outline:none;transition:border-color .2s;text-align:center}
+.pts-input:focus{border-color:var(--accent)}
+.pts-max{font-size:12px;color:var(--muted)}
 .save-btn{background:var(--accent);color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;padding:11px 28px;border:none;border-radius:10px;cursor:pointer;transition:background .2s;margin-top:.5rem}
 .save-btn:hover{background:var(--accent2)}
+/* Editor */
 .ed-q-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:1rem}
 .ed-q-header{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
 .ed-num{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--gold)}
@@ -101,6 +103,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .add-q-btn:hover{border-color:var(--accent);color:var(--accent)}
 .primary-btn{background:var(--gold);color:#1a1200;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;padding:10px 24px;border:none;border-radius:10px;cursor:pointer;transition:background .2s}
 .primary-btn:hover{background:var(--gold2)}
+/* Image upload in editor */
+.img-upload-zone{border:2px dashed var(--border2);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:border-color .2s;position:relative}
+.img-upload-zone:hover{border-color:var(--accent)}
+.img-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-preview{max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;border:1px solid var(--border)}
+.img-remove-btn{background:rgba(240,96,96,.15);color:var(--danger);border:1px solid rgba(240,96,96,.3);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;margin-top:6px;font-family:'DM Sans',sans-serif}
+/* Settings */
 .settings-grid{display:grid;gap:1rem;max-width:720px}
 .setting-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem}
 .setting-title{font-family:'Syne',sans-serif;font-weight:600;font-size:14px;margin-bottom:.25rem}
@@ -148,7 +157,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   </div>
 
   <div class="main">
-    <!-- COPIES -->
     <div id="copiesView">
       <div class="stats-row" id="statsRow"></div>
       <div id="listView">
@@ -164,10 +172,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
     </div>
 
-    <!-- ÉDITEUR -->
     <div id="editorView" style="display:none">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
-        <div class="section-heading" style="margin:0">Éditeur de questions <span>Modifications visibles immédiatement par les candidats</span></div>
+        <div class="section-heading" style="margin:0">Éditeur de questions <span>Modifications visibles immédiatement</span></div>
         <button class="primary-btn" onclick="saveQuestions()">Sauvegarder</button>
       </div>
       <div id="editorList"></div>
@@ -179,7 +186,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <button class="primary-btn" onclick="saveQuestions()" style="margin-top:1.5rem">Sauvegarder les questions</button>
     </div>
 
-    <!-- PARAMÈTRES -->
     <div id="settingsView" style="display:none">
       <div class="section-heading">Paramètres généraux</div>
       <div class="settings-grid">
@@ -193,7 +199,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           <div class="ed-field"><div class="ed-label">Message de règlement</div><textarea class="setting-input" id="cfg_rules" style="min-height:80px;resize:vertical"></textarea></div>
           <button class="setting-btn" onclick="saveConfig()">Sauvegarder</button>
         </div>
-
         <div class="setting-card">
           <div class="setting-title">Mots de passe</div>
           <div class="setting-desc">Changez les mots de passe d'accès formateur et admin.</div>
@@ -204,12 +209,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
             <div class="setting-row"><input type="password" class="setting-input" id="new_admin_pwd" placeholder="Nouveau mot de passe"><button class="setting-btn" onclick="changePassword('admin')">Changer</button></div>
           </div>
         </div>
-
         <div class="setting-card">
           <div class="setting-title">Informations du site</div>
           <div class="info-row" id="infoRow"></div>
         </div>
-
         <div class="setting-card danger-zone">
           <div class="setting-title">⚠ Zone dangereuse</div>
           <div class="setting-desc">Ces actions sont irréversibles.</div>
@@ -227,7 +230,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, get, set, update, remove, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, get, set, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA32wnP7-vcOIVOT5ltU84PUWQdgkiTfOA",
@@ -238,20 +241,18 @@ const firebaseConfig = {
   messagingSenderId: "530938941497",
   appId: "1:530938941497:web:ec97e91a6d8500d3fbfde8"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 // ⚠️ CHANGER LES MOTS DE PASSE ICI
 let ADMIN_PASSWORD = 'Nique349';
-let FORMATEUR_PASSWORD = 'formateur2025';
+let FORMATEUR_PASSWORD = 'training center';
 
 let submissions = [], questions = [], currentSub = null, currentScores = {}, currentKey = null;
-let config = { title: 'Examen Procédure 2', duration: 25, pass: 17, signature: '064 | Maxence Brown — Lead formation procédure.', rules: 'Ne pas renseigner de fausses informations · Toute forme de triche entraîne une convocation CS + BL.' };
+let config = { title: 'Examen Procédure 2', duration: 25, pass: 17, signature: '064 | Maxence Brown', rules: '' };
 
 window.login = function() {
-  const v = document.getElementById('pwdInput').value;
-  if (v === ADMIN_PASSWORD) {
+  if (document.getElementById('pwdInput').value === ADMIN_PASSWORD) {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appShell').style.display = 'block';
     loadAll();
@@ -262,9 +263,7 @@ window.login = function() {
 };
 document.getElementById('pwdInput').addEventListener('keydown', e => { if(e.key==='Enter') window.login(); });
 
-async function loadAll() {
-  await Promise.all([loadData(), loadQuestions(), loadConfig(), loadPasswords()]);
-}
+async function loadAll() { await Promise.all([loadData(), loadQuestions(), loadConfig(), loadPasswords()]); }
 
 window.loadData = async function() {
   try {
@@ -294,20 +293,16 @@ async function loadConfig() {
 async function loadPasswords() {
   try {
     const snap = await get(ref(db, 'passwords'));
-    if (snap.exists()) {
-      const p = snap.val();
-      if (p.admin) ADMIN_PASSWORD = p.admin;
-      if (p.formateur) FORMATEUR_PASSWORD = p.formateur;
-    }
+    if (snap.exists()) { const p = snap.val(); if(p.admin) ADMIN_PASSWORD=p.admin; if(p.formateur) FORMATEUR_PASSWORD=p.formateur; }
   } catch(e) {}
 }
 
 function fillConfigForm() {
-  document.getElementById('cfg_title').value = config.title || '';
-  document.getElementById('cfg_duration').value = config.duration || 25;
-  document.getElementById('cfg_pass').value = config.pass || 17;
-  document.getElementById('cfg_signature').value = config.signature || '';
-  document.getElementById('cfg_rules').value = config.rules || '';
+  document.getElementById('cfg_title').value = config.title||'';
+  document.getElementById('cfg_duration').value = config.duration||25;
+  document.getElementById('cfg_pass').value = config.pass||17;
+  document.getElementById('cfg_signature').value = config.signature||'';
+  document.getElementById('cfg_rules').value = config.rules||'';
 }
 
 function renderInfoRow() {
@@ -316,7 +311,7 @@ function renderInfoRow() {
     <div class="info-item"><div class="info-key">Total de points</div><div class="info-val">${max} pts</div></div>
     <div class="info-item"><div class="info-key">Seuil de réussite</div><div class="info-val">${config.pass}/${max}</div></div>
     <div class="info-item"><div class="info-key">Durée examen</div><div class="info-val">${config.duration} min</div></div>
-    <div class="info-item"><div class="info-key">Nombre de questions</div><div class="info-val">${questions.length}</div></div>
+    <div class="info-item"><div class="info-key">Nb questions</div><div class="info-val">${questions.length}</div></div>
     <div class="info-item"><div class="info-key">Copies reçues</div><div class="info-val">${submissions.length}</div></div>
     <div class="info-item"><div class="info-key">Copies corrigées</div><div class="info-val">${submissions.filter(s=>s.status==='done').length}</div></div>`;
 }
@@ -327,36 +322,31 @@ window.saveConfig = async function() {
   config.pass = parseInt(document.getElementById('cfg_pass').value)||17;
   config.signature = document.getElementById('cfg_signature').value;
   config.rules = document.getElementById('cfg_rules').value;
-  try { await set(ref(db, 'config'), config); toast('Paramètres sauvegardés ✓'); renderInfoRow(); }
-  catch(e) { toast('Erreur de sauvegarde'); }
+  try { await set(ref(db,'config'), config); toast('Paramètres sauvegardés ✓'); renderInfoRow(); } catch(e){ toast('Erreur'); }
 };
 
 window.changePassword = async function(role) {
   const input = document.getElementById(`new_${role}_pwd`);
   const val = input.value.trim();
-  if (!val || val.length < 4) { toast('Mot de passe trop court (4 caractères min)'); return; }
-  if (role === 'formateur') FORMATEUR_PASSWORD = val;
-  else ADMIN_PASSWORD = val;
-  try {
-    await set(ref(db, 'passwords'), { admin: ADMIN_PASSWORD, formateur: FORMATEUR_PASSWORD });
-    toast(`Mot de passe ${role} mis à jour ✓`); input.value = '';
-  } catch(e) { toast('Erreur de sauvegarde'); }
+  if (!val || val.length < 4) { toast('Mot de passe trop court (4 min)'); return; }
+  if (role==='formateur') FORMATEUR_PASSWORD=val; else ADMIN_PASSWORD=val;
+  try { await set(ref(db,'passwords'), {admin:ADMIN_PASSWORD, formateur:FORMATEUR_PASSWORD}); toast(`Mot de passe ${role} mis à jour ✓`); input.value=''; } catch(e){ toast('Erreur'); }
 };
 
 function getDefaultQuestions() {
   return [
-    {id:'q1',section:'Question Théorique',text:"Quelles sont les étapes d'une Procédure, de l'arrestation (fin de la poursuite) à l'annonce du 10-15 ?",type:'open',points:1},
-    {id:'q2',section:'Question Théorique',text:"Que dois-je faire si aucun agent du même sexe qu'un prévenu n'est disponible dans mon District pour une Palpation ?",type:'open',points:1},
-    {id:'q3',section:'Question Théorique',text:"Dans quelles circonstances le recours à un État-Major est-il nécessaire ?",type:'open',points:1},
-    {id:'q4',section:'Question Théorique',text:"Qui peut autoriser un agent à retenir le Chef d'inculpation \"Association de Malfaiteurs\" ?",type:'mcq',points:1,options:["Un membre de l'État-Major","La supervision (Sergent I & II)","N'importe quel agent","Les Procureurs et Juges"],correct:[0]},
-    {id:'q5',section:'Question Théorique',text:"Que faire si l'individu ne possède pas sa carte d'identité et est masqué lorsque vous souhaitez lui lire ses droits Miranda ?",type:'open',points:1},
-    {id:'q6',section:'Question Théorique',text:"Parmi ces informations, lesquelles sont correctes ?",type:'mcq_multi',points:3,options:["Face à un avocat, je suis le seul décisionnaire de la retenue de peine","Un avocat peut exiger un procureur/juge si un chef d'inculpation ne lui convient pas","Un avocat a le dernier mot sur le temps de prison fédéral","Lors d'une CI, la présomption d'innocence a l'avantage","CI est l'abréviation de : \"Comparution Immédiate\""],correct:[0,4]},
-    {id:'q7',section:'Question Théorique',text:"Qui peut appliquer une Min 1 / Max 1 ?",type:'open',points:1},
-    {id:'q8',section:'Question Pratique',text:"Cas Thomas Hisoto — Cette feuille de calcul contient-elle des erreurs ? Si oui, relevez-les.",type:'open',points:3},
-    {id:'q9',section:'Question Pratique',text:"Le document suite à la non-disponibilité des Proc/Juge/EM est-il correct ? Détaillez votre réponse.",type:'open',points:1},
-    {id:'q10',section:'Question Pratique',text:"Lorsqu'un prévenu n'arrête pas de vous insulter en procédure, que devez-vous faire ?",type:'mcq',points:1,options:["L'insulter en retour et lui faire une procédure montagne","Abandonner la procédure et le mettre en TIG","Garder votre sang froid puis le matraquer","Garder votre sang froid et lui ajouter un chef d'inculpation adéquat si besoin"],correct:[3]},
-    {id:'q11',section:'Question Pratique',text:"Le casier ci-dessous est-il correct ?",type:'mcq',points:1,options:["Oui","Non"],correct:[0]},
-    {id:'q12',section:'Question Pratique',text:"Mise en situation — Aaron Elba / Braquage Fleeca : Complétez la feuille de calcul en conséquence.",type:'open',points:5},
+    {id:'q1',section:'Question Théorique',text:"Quelles sont les étapes d'une Procédure, de l'arrestation à l'annonce du 10-15 ?",type:'open',points:1,image:''},
+    {id:'q2',section:'Question Théorique',text:"Que faire si aucun agent du même sexe n'est disponible pour une Palpation ?",type:'open',points:1,image:''},
+    {id:'q3',section:'Question Théorique',text:"Dans quelles circonstances le recours à un État-Major est-il nécessaire ?",type:'open',points:1,image:''},
+    {id:'q4',section:'Question Théorique',text:"Qui peut autoriser le Chef d'inculpation \"Association de Malfaiteurs\" ?",type:'mcq',points:1,options:["Un membre de l'État-Major","La supervision (Sergent I & II)","N'importe quel agent","Les Procureurs et Juges"],correct:[0],image:''},
+    {id:'q5',section:'Question Théorique',text:"Que faire si l'individu n'a pas sa carte d'identité et est masqué pour les droits Miranda ?",type:'open',points:1,image:''},
+    {id:'q6',section:'Question Théorique',text:"Parmi ces informations, lesquelles sont correctes ?",type:'mcq_multi',points:3,options:["Face à un avocat, je suis le seul décisionnaire","Un avocat peut exiger un procureur/juge","Un avocat a le dernier mot sur la prison fédérale","Lors d'une CI, la présomption d'innocence a l'avantage","CI = Comparution Immédiate"],correct:[0,4],image:''},
+    {id:'q7',section:'Question Théorique',text:"Qui peut appliquer une Min 1 / Max 1 ?",type:'open',points:1,image:''},
+    {id:'q8',section:'Question Pratique',text:"Cas Thomas Hisoto — Cette feuille de calcul contient-elle des erreurs ?",type:'open',points:3,image:''},
+    {id:'q9',section:'Question Pratique',text:"Le document suite à la non-disponibilité des Proc/Juge/EM est-il correct ?",type:'open',points:1,image:''},
+    {id:'q10',section:'Question Pratique',text:"Lorsqu'un prévenu vous insulte en procédure, que faites-vous ?",type:'mcq',points:1,options:["L'insulter en retour","Abandonner la procédure","Garder son sang froid puis le matraquer","Garder son sang froid et ajouter un chef d'inculpation"],correct:[3],image:''},
+    {id:'q11',section:'Question Pratique',text:"Le casier ci-dessous est-il correct ?",type:'mcq',points:1,options:["Oui","Non"],correct:[0],image:''},
+    {id:'q12',section:'Question Pratique',text:"Mise en situation — Aaron Elba / Braquage Fleeca : Complétez la feuille de calcul.",type:'open',points:5,image:''},
   ];
 }
 
@@ -392,7 +382,7 @@ function renderList() {
           <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:${done?(passed?'var(--success)':'var(--danger)'):'var(--muted)'}">${done?tot+'/'+totalMax():'—'}</div>
           <span class="badge ${done?(passed?'badge-pass':'badge-fail'):'badge-pending'}">${done?(passed?'Reçu':'Recalé'):'À corriger'}</span>
         </div>
-        <button class="icon-btn danger" onclick="deleteSubmission(${i})" title="Supprimer">✕</button>
+        <button class="icon-btn danger" onclick="deleteSubmission(${i})">✕</button>
       </div>
     </div>`;
   }).join('');
@@ -423,7 +413,7 @@ function renderCorrection() {
     <div class="score-summary"><div class="score-big" id="scoreBig" style="color:${passed?'var(--success)':'var(--danger)'}">${total}<span style="font-size:1.2rem;font-weight:400;color:var(--muted)">/${max}</span></div>
     <div id="scoreLabel" style="font-size:12px;font-weight:500;color:${passed?'var(--success)':'var(--danger)'}">${passed?'✓ Reçu':'✗ Recalé'} (seuil: ${config.pass})</div></div></div>`;
   questions.forEach((q,i)=>{
-    const ans=sub.answers[q.id], sc=currentScores[q.id], isAuto=q.type==='mcq'||q.type==='mcq_multi';
+    const ans=sub.answers[q.id], sc=currentScores[q.id]!==undefined?currentScores[q.id]:'', isAuto=q.type==='mcq'||q.type==='mcq_multi';
     let ansDisplay='';
     if(q.type==='open'){
       const text=(ans||'').trim();
@@ -433,28 +423,46 @@ function renderCorrection() {
       const correct=q.correct||[];
       const isOk=q.type==='mcq'?ans===correct[0]:(correct.length===selected.length&&correct.every(c=>selected.includes(c)));
       ansDisplay=`<div class="q-answer${isAuto?(isOk?' correct':' wrong'):''}">${selected.length?selected.map(i=>q.options[i]).join(', '):'<em>Aucune réponse</em>'}</div>`;
-      if(isAuto) ansDisplay+=`<div style="font-size:12px;color:${isOk?'var(--success)':'var(--danger)'};margin-bottom:8px">${isOk?'✓ Bonne réponse':'✗ Mauvaise réponse — Correcte : '+correct.map(c=>q.options[c]).join(', ')}</div>`;
+      if(isAuto) ansDisplay+=`<div style="font-size:12px;color:${isOk?'var(--success)':'var(--danger)'};margin-bottom:8px">${isOk?'✓ Bonne réponse':'✗ Mauvaise — Correcte : '+correct.map(c=>q.options[c]).join(', ')}</div>`;
     }
-    const btns=Array.from({length:q.points+1},(_,pi)=>`<button class="pts-btn${sc===pi?' active':''}" onclick="setScore('${q.id}',${pi},this)">${pi}</button>`).join('');
-    html+=`<div class="q-block"><div class="q-head"><div class="q-tag">Q${i+1}</div><div class="q-question">${q.text.length>120?q.text.slice(0,120)+'…':q.text}</div><div style="font-size:11px;color:var(--muted);white-space:nowrap;margin-left:8px">${q.points}pt</div></div>
-      ${ansDisplay}<div class="scoring-row"><span class="score-label2">Note :</span>${btns}${isAuto?'<span style="font-size:11px;color:var(--muted);margin-left:auto">Auto-corrigé</span>':''}</div></div>`;
+    const imgHtml = q.image ? `<img src="${q.image}" class="q-img" alt="Image question">` : '';
+    html+=`<div class="q-block">
+      <div class="q-head"><div class="q-tag">Q${i+1}</div><div class="q-question">${q.text.length>120?q.text.slice(0,120)+'…':q.text}</div><div style="font-size:11px;color:var(--muted);white-space:nowrap;margin-left:8px">${q.points}pt</div></div>
+      ${imgHtml}${ansDisplay}
+      <div class="scoring-row">
+        <span class="score-label2">Note :</span>
+        <input type="number" class="pts-input" min="0" max="${q.points}" step="0.5" value="${sc}" oninput="setScore('${q.id}',parseFloat(this.value)||0,${q.points})">
+        <span class="pts-max">/ ${q.points} pt${q.points>1?'s':''}</span>
+        ${isAuto?'<span style="font-size:11px;color:var(--muted);margin-left:auto">Auto-corrigé</span>':''}
+      </div>
+    </div>`;
   });
   html+=`<button class="save-btn" onclick="saveCorrection()">Sauvegarder la correction</button>`;
   document.getElementById('corrContent').innerHTML=html;
 }
 
-window.setScore = function(qid,val,btn){
-  currentScores[qid]=val;
-  btn.closest('.scoring-row').querySelectorAll('.pts-btn').forEach((b,i)=>b.className='pts-btn'+(i===val?' active':''));
-  const total=questions.reduce((s,q)=>s+(typeof currentScores[q.id]==='number'?currentScores[q.id]:0),0);
-  const passed=total>=config.pass;
-  const big=document.getElementById('scoreBig');
-  if(big){big.innerHTML=`${total}<span style="font-size:1.2rem;font-weight:400;color:var(--muted)">/${totalMax()}</span>`;big.style.color=passed?'var(--success)':'var(--danger)';}
-  const lbl=document.getElementById('scoreLabel');
-  if(lbl){lbl.textContent=(passed?'✓ Reçu':'✗ Recalé')+' (seuil: '+config.pass+')';lbl.style.color=passed?'var(--success)':'var(--danger)';}
+window.setScore = function(qid, val, max) {
+  if(val < 0) val = 0;
+  if(val > max) val = max;
+  currentScores[qid] = val;
+  updateScoreDisplay();
 };
 
+function updateScoreDisplay() {
+  const total = questions.reduce((s,q)=>s+(typeof currentScores[q.id]==='number'?currentScores[q.id]:0),0);
+  const passed = total >= config.pass;
+  const big = document.getElementById('scoreBig');
+  if(big){big.innerHTML=`${total}<span style="font-size:1.2rem;font-weight:400;color:var(--muted)">/${totalMax()}</span>`;big.style.color=passed?'var(--success)':'var(--danger)';}
+  const lbl = document.getElementById('scoreLabel');
+  if(lbl){lbl.textContent=(passed?'✓ Reçu':'✗ Recalé')+' (seuil: '+config.pass+')';lbl.style.color=passed?'var(--success)':'var(--danger)';}
+}
+
 window.saveCorrection = async function() {
+  // Sync scores from inputs before saving
+  questions.forEach(q => {
+    const inp = document.querySelector(`input.pts-input[oninput*="'${q.id}'"]`);
+    if(inp) currentScores[q.id] = parseFloat(inp.value)||0;
+  });
   try {
     await update(ref(db, `submissions/${currentKey}`), { scores: currentScores, status: 'done' });
     submissions[currentSub].scores={...currentScores}; submissions[currentSub].status='done';
@@ -464,57 +472,88 @@ window.saveCorrection = async function() {
 
 window.deleteSubmission = async function(i) {
   if(!confirm(`Supprimer la copie de "${submissions[i].candidat}" ?`)) return;
-  try {
-    await remove(ref(db, `submissions/${submissions[i]._key}`));
-    submissions.splice(i,1); toast('Copie supprimée'); renderStats(); renderList();
-  } catch(e) { toast('Erreur de suppression'); }
+  try { await remove(ref(db,`submissions/${submissions[i]._key}`)); submissions.splice(i,1); toast('Copie supprimée'); renderStats(); renderList(); }
+  catch(e){ toast('Erreur'); }
 };
 
 window.deleteAllSubmissions = async function() {
-  if(!confirm('ATTENTION : Supprimer TOUTES les copies ?')) return;
-  if(!confirm('Confirmer la suppression de toutes les copies ?')) return;
-  try {
-    await remove(ref(db, 'submissions'));
-    submissions=[]; toast('Toutes les copies supprimées'); renderStats(); renderList();
-  } catch(e) { toast('Erreur'); }
+  if(!confirm('Supprimer TOUTES les copies ?')) return;
+  if(!confirm('Confirmer ?')) return;
+  try { await remove(ref(db,'submissions')); submissions=[]; toast('Toutes les copies supprimées'); renderStats(); renderList(); }
+  catch(e){ toast('Erreur'); }
 };
 
 window.resetQuestions = async function() {
   if(!confirm('Réinitialiser les questions par défaut ?')) return;
-  questions=getDefaultQuestions();
+  questions = getDefaultQuestions();
   try { await set(ref(db,'questions'), questions); renderEditor(); toast('Questions réinitialisées'); }
-  catch(e) { toast('Erreur'); }
+  catch(e){ toast('Erreur'); }
 };
 
-// EDITOR
-function renderEditor(){
-  document.getElementById('editorList').innerHTML=questions.map((q,i)=>renderEditorQ(q,i)).join('');
+// === EDITOR ===
+function renderEditor() {
+  document.getElementById('editorList').innerHTML = questions.map((q,i) => renderEditorQ(q,i)).join('');
 }
-function renderEditorQ(q,i){
-  const typeLabel=q.type==='open'?'Ouverte':q.type==='mcq'?'QCM unique':'QCM multiple';
-  let optHtml='';
-  if(q.type!=='open'){
-    optHtml=`<div class="ed-field"><div class="ed-label">Options <span style="color:var(--muted);font-size:11px">(✓ = bonne réponse)</span></div>
+
+function renderEditorQ(q, i) {
+  const typeLabel = q.type==='open'?'Ouverte':q.type==='mcq'?'QCM unique':'QCM multiple';
+  let optHtml = '';
+  if(q.type !== 'open') {
+    optHtml = `<div class="ed-field"><div class="ed-label">Options <span style="color:var(--muted);font-size:11px">(✓ = bonne réponse)</span></div>
       <div class="ed-options">${(q.options||[]).map((opt,oi)=>`<div class="ed-opt-row">
         <input type="${q.type==='mcq_multi'?'checkbox':'radio'}" name="correct_${i}" ${(q.correct||[]).includes(oi)?'checked':''} onchange="updateCorrect(${i})" class="ed-opt-correct" value="${oi}">
         <input type="text" class="ed-input" value="${opt.replace(/"/g,'&quot;')}" oninput="questions[${i}].options[${oi}]=this.value">
-        <button onclick="removeOption(${i},${oi})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 6px;border-radius:4px;transition:color .15s" onmouseover="this.style.color='var(--danger)'" onmouseout="this.style.color='var(--muted)'">×</button>
+        <button onclick="removeOption(${i},${oi})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 6px" onmouseover="this.style.color='var(--danger)'" onmouseout="this.style.color='var(--muted)'">×</button>
       </div>`).join('')}</div>
       <button class="add-opt-btn" onclick="addOption(${i})">+ Ajouter une option</button></div>`;
   }
+
+  const hasImage = q.image && q.image.length > 0;
+  const imgHtml = `<div class="ed-field">
+    <div class="ed-label">Image de la question (optionnel)</div>
+    <div class="img-upload-zone" id="imgZone_${i}" ${hasImage?'style="border-color:var(--accent)"':''}>
+      <input type="file" accept="image/*" onchange="handleImageUpload(event,${i})">
+      ${hasImage
+        ? `<img src="${q.image}" class="img-preview" id="imgPreview_${i}"><br><button class="img-remove-btn" onclick="removeImage(${i})">Supprimer l'image</button>`
+        : `<div style="font-size:13px;color:var(--muted)">📎 Cliquez ou glissez une image ici</div><div style="font-size:11px;color:var(--muted);margin-top:4px">JPG, PNG — max ~700 Ko recommandé</div>`
+      }
+    </div>
+  </div>`;
+
   return `<div class="ed-q-card" id="eq_${i}">
     <div class="ed-q-header"><span class="ed-num">Q${i+1}</span><span class="ed-type-badge">${typeLabel}</span>
       <button class="ed-del" onclick="deleteQuestion(${i})">×</button></div>
     <div class="ed-field"><div class="ed-label">Section</div><input type="text" class="ed-input" value="${(q.section||'').replace(/"/g,'&quot;')}" oninput="questions[${i}].section=this.value"></div>
     <div class="ed-field"><div class="ed-label">Intitulé de la question</div><textarea class="ed-input" style="min-height:70px;resize:vertical" oninput="questions[${i}].text=this.value">${q.text||''}</textarea></div>
-    <div class="ed-field"><div class="ed-label">Barème (points)</div><input type="number" class="ed-input" style="width:80px" min="1" max="20" value="${q.points}" oninput="questions[${i}].points=parseInt(this.value)||1"></div>
-    ${optHtml}</div>`;
+    <div class="ed-field"><div class="ed-label">Barème (points)</div><input type="number" class="ed-input" style="width:80px" min="0.5" max="20" step="0.5" value="${q.points}" oninput="questions[${i}].points=parseFloat(this.value)||1"></div>
+    ${optHtml}
+    ${imgHtml}
+  </div>`;
 }
+
+window.handleImageUpload = function(event, qi) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 900000) { toast('Image trop lourde ! Max ~700 Ko recommandé.'); return; }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    questions[qi].image = e.target.result;
+    renderEditor();
+    setTimeout(() => document.getElementById(`eq_${qi}`)?.scrollIntoView({behavior:'smooth', block:'nearest'}), 100);
+  };
+  reader.readAsDataURL(file);
+};
+
+window.removeImage = function(qi) {
+  questions[qi].image = '';
+  renderEditor();
+};
+
 window.updateCorrect = function(qi){ questions[qi].correct=[...document.querySelectorAll(`input[name="correct_${qi}"]`)].filter(i=>i.checked).map(i=>parseInt(i.value)); };
 window.addOption = function(qi){ if(!questions[qi].options)questions[qi].options=[]; questions[qi].options.push('Nouvelle option'); renderEditor(); };
 window.removeOption = function(qi,oi){ questions[qi].options.splice(oi,1); questions[qi].correct=(questions[qi].correct||[]).filter(c=>c!==oi).map(c=>c>oi?c-1:c); renderEditor(); };
 window.addQuestion = function(type){
-  const q={id:'q'+Date.now(),section:'Question Théorique',text:'',type,points:1};
+  const q={id:'q'+Date.now(),section:'Question Théorique',text:'',type,points:1,image:''};
   if(type!=='open'){q.options=['Option A','Option B'];q.correct=[0];}
   questions.push(q); renderEditor();
   setTimeout(()=>document.getElementById(`eq_${questions.length-1}`)?.scrollIntoView({behavior:'smooth'}),100);
@@ -522,7 +561,7 @@ window.addQuestion = function(type){
 window.deleteQuestion = function(i){ if(!confirm('Supprimer cette question ?'))return; questions.splice(i,1); renderEditor(); };
 window.saveQuestions = async function(){
   try { await set(ref(db,'questions'), questions); toast('Questions sauvegardées ✓'); renderInfoRow(); }
-  catch(e) { toast('Erreur de sauvegarde'); }
+  catch(e){ toast('Erreur — image peut-être trop lourde pour Firebase (max 1MB total)'); }
 };
 
 window.showTab = function(tab){
@@ -533,7 +572,7 @@ window.showTab = function(tab){
   if(tab==='settings') renderInfoRow();
 };
 
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 </script>
 </body>
 </html>
